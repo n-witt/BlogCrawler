@@ -4,35 +4,60 @@ Created on 25.04.2014
 @author: nils witt
 '''
 
-from scrapy import log
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
-from scrapy.spider import Spider
-from Crawler.items import CrawlerItem
+from Crawler.items import BlogItem
 
 
-#from scrapy.contrib.spiders.crawl import CrawlSpider, Rule
-class blogCrawler(Spider):
-    name='blogCrawler'
+class MySpider(CrawlSpider):
+    name = 'blogCrawler'
     start_urls = ['http://krugman.blogs.nytimes.com/']
-    #rules = (Rule(SgmlLinkExtractor(restrict_xpaths="/html/body/div/main/div[2]/div/div/div/section/div/article"), callback='parse_item'),)
 
-    def mergeDictElements(self, item):
-        newItem = ""
-        for i in item:
-            newItem += i
-        return [newItem]
-    
-    def parse(self, response):
+    rules = (
+        Rule(SgmlLinkExtractor(restrict_xpaths=('//h3[@class="entry-title"]', )), callback='parse_item'),
+    )
+
+    def parse_item(self, response):
         sel = Selector(response)
-        items = []
-        for article in sel.xpath("//article"):
-            #print article.extract()
-            linkExtractor = SgmlLinkExtractor()
-            item = CrawlerItem()
-            item['headline'] = article.xpath('header/h3/a/text()').extract()
-            item['text'] = article.xpath('div/p[@class="story-body-text"]/text()').extract()
-            item['text'] = self.mergeDictElements(item['text'])
-            item['links'] = linkExtractor.extract_links(article)
-            items.append(item)
-        return items
+        item = BlogItem()
+        link_extractor = SgmlLinkExtractor()
+        item['headline'] = sel.xpath("/html/body/div/main/div[2]/div/div/div/article/header/h1/text()").extract()
+        item['text'] = sel.xpath('//p[@class="story-body-text"]/text()').extract()
+        item['text'] = self.mergeListElements(item['text'])
+        item['links'] = self.substring(link_extractor.extract_links(response).__repr__(), "url='", "'")
+        return item
+    
+    def substring(self, s, leftDelimiter, rightDelimiter):
+        """extracts substrings in string that are enclosed by leftDelimiter an rightDelimiter.
+        multiple appearances of the delimiters are handeled as well.
+        example: "live long and prosper" with delimiter "l" and " " will result in ["ive", "ong"]
+        all parameters must be strings
+        """
+        if isinstance(s, str) and isinstance(leftDelimiter, str) and isinstance(rightDelimiter, str):
+            result = []
+            leftBorder = 0
+            rightBorder = 0
+            while True:
+                leftBorder = s.find(leftDelimiter, rightBorder)
+                if leftBorder == -1:
+                    break
+                rightBorder = s.find(rightDelimiter, leftBorder+len(leftDelimiter))
+                result.append(s[leftBorder+len(leftDelimiter):rightBorder])
+                leftBorder = rightBorder + 1
+            return result
+        else:
+            raise Exception("one or more parameter are not of type str")
+    
+    def mergeListElements(self, item):
+        """merges n elements of item into one.
+        e.g. ["f", "o", "o"] becomes ["foo"].
+        item must be a list.
+        """
+        if isinstance(item, list):
+            newItem = ""
+            for i in item:
+                newItem += i
+            return [newItem]
+        else:
+            raise Exception("item ist not a list")
