@@ -9,6 +9,7 @@ from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
 from Crawler.items import BlogItem
 import datetime
+from scrapy import log
 
 
 class MySpider(CrawlSpider):
@@ -22,15 +23,18 @@ class MySpider(CrawlSpider):
     def parse_item(self, response):
         sel = Selector(response)
         item = BlogItem()
-        link_extractor = SgmlLinkExtractor(restrict_xpaths=("/html/body/div/main/div[2]/div/div/div/article"))
+        links = []
         item['blog_name'] = "The Conscience of a Liberal"
         item['url'] = response.url
         item['releasedate'] = sel.xpath("/html/body/div/main/div[2]/div/div/div/article/header/div[2]/time/@datetime").extract().pop()
         item['crawldate'] = datetime.datetime.now().isoformat()
         item['author'] = "Paul Krugman"
         item['headline'] = sel.xpath("/html/body/div/main/div[2]/div/div/div/article/header/h1/text()").extract().pop(0)
-        item['body'] = self.mergeListElements(sel.xpath('//p[@class="story-body-text"]/text()').extract()).pop(0)
-        item['links'] = self.substring(link_extractor.extract_links(response).__repr__(), "url='", "'")       
+        item['body'] = self.mergeListElements(sel.xpath('//p[@class="story-body-text"]/text() | //p[@class="story-body-text"]/a/text()').extract()).pop(0)
+        for i in sel.xpath("//p[@class='story-body-text']/a/attribute::href").extract():
+            links.append(i)
+        item['links'] = links
+        log.msg("parsed %s successfully" % response.url, level=log.INFO) 
         return item
     
     def substring(self, s, leftDelimiter, rightDelimiter):
@@ -52,6 +56,7 @@ class MySpider(CrawlSpider):
                 leftBorder = rightBorder + 1
             return result
         else:
+            log.msg("invalid parametertype used", level=log.DEBUG)
             raise Exception("one or more parameter are not of type str")
     
     def mergeListElements(self, item):
@@ -65,4 +70,5 @@ class MySpider(CrawlSpider):
                 newItem += i
             return [newItem]
         else:
-            raise Exception("item ist not a list")
+            log.msg("item is not a list", level=log.DEBUG)
+            raise Exception("item is not a list")

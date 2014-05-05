@@ -1,8 +1,24 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+from datetime import datetime
+from elasticsearch import Elasticsearch
 
 class CrawlerPipeline(object):
     def process_item(self, item, spider):
+        return item
+
+class StoreInElasticsearch(object):
+    es = Elasticsearch()
+    
+    def process_item(self, item, spider):        
+        doc = {
+               "name": item['blog_name'],
+               "url": item['url'],
+               "releasedate": item['releasedate'],
+               "crawldate": item['crawldate'],
+               "author": item['author'],
+               "headline": item['headline'],
+               "body": item['body'],
+               "links": item['links']
+               }
+        
+        res = self.es.index(index='foo', doc_type='bar', body=doc)
         return item
