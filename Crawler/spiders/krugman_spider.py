@@ -8,6 +8,7 @@ from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
 from Crawler.items import BlogItem
+import datetime
 
 
 class MySpider(CrawlSpider):
@@ -21,11 +22,15 @@ class MySpider(CrawlSpider):
     def parse_item(self, response):
         sel = Selector(response)
         item = BlogItem()
-        link_extractor = SgmlLinkExtractor()
-        item['headline'] = sel.xpath("/html/body/div/main/div[2]/div/div/div/article/header/h1/text()").extract()
-        item['text'] = sel.xpath('//p[@class="story-body-text"]/text()').extract()
-        item['text'] = self.mergeListElements(item['text'])
-        item['links'] = self.substring(link_extractor.extract_links(response).__repr__(), "url='", "'")
+        link_extractor = SgmlLinkExtractor(restrict_xpaths=("/html/body/div/main/div[2]/div/div/div/article"))
+        item['blog_name'] = "The Conscience of a Liberal"
+        item['url'] = response.url
+        item['releasedate'] = sel.xpath("/html/body/div/main/div[2]/div/div/div/article/header/div[2]/time/@datetime").extract().pop()
+        item['crawldate'] = datetime.datetime.now().isoformat()
+        item['author'] = "Paul Krugman"
+        item['headline'] = sel.xpath("/html/body/div/main/div[2]/div/div/div/article/header/h1/text()").extract().pop(0)
+        item['body'] = self.mergeListElements(sel.xpath('//p[@class="story-body-text"]/text()').extract()).pop(0)
+        item['links'] = self.substring(link_extractor.extract_links(response).__repr__(), "url='", "'")       
         return item
     
     def substring(self, s, leftDelimiter, rightDelimiter):

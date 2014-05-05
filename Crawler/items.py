@@ -6,8 +6,11 @@
 from scrapy.item import Item, Field
 
 class BlogItem(Item):
-    # define the fields for your item here like:
-    # name = Field()
+    blog_name = Field()
+    url = Field()
+    releasedate = Field()
+    crawldate = Field()
+    author = Field()
     headline = Field()
-    text = Field()
+    body = Field()
     links = Field()
