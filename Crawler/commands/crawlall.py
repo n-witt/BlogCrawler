@@ -9,7 +9,6 @@ Created on 06.05.2014
           hope dies last.
 @requires: this command requires a running elasticsearch-instance at
            localhost:9200
-@
 '''
 from scrapy import signals
 from twisted.internet import reactor
