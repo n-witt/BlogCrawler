@@ -1,4 +1,3 @@
-from datetime import datetime
 from elasticsearch import Elasticsearch
 
 class CrawlerPipeline(object):
@@ -20,5 +19,5 @@ class StoreInElasticsearch(object):
                "links": item['links']
                }
         
-        res = self.es.index(index='foo', doc_type='bar', body=doc)
+        self.es.index(index='foo', doc_type='bar', body=doc)
         return item

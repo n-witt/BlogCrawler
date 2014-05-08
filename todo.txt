@@ -1,1 +1,3 @@
-links auf pdfs tauchen nicht auf. das muss gefixt werden
+duplicate erkennen und außschließen.
+"scrapy crawlall" mit argument versehen, um eine elasticsearch-instanz angeben zu können
+einheitliches datumsformat

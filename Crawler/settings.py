@@ -16,5 +16,7 @@ ITEM_PIPELINES = {
     'Crawler.pipelines.StoreInElasticsearch': 1,
 }
 
+COMMANDS_MODULE = 'Crawler.commands'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'Crawler (+http://www.yourdomain.com)'
