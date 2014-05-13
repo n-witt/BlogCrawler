@@ -26,9 +26,9 @@ class MySpider(CrawlSpider):
         links = []
         item['blog_name'] = "The Upshot"
         item['url'] = response.url
-        item['releasedate'] = safepop(sel.xpath("//article/header/div/div/p/time/@datetime").extract(), 0)
+        item['releasedate'] = self.parse_date(safepop(sel.xpath("//article/header/div/div/p/time/@datetime | //article/header/div/div/div/p/time/@datetime").extract(), 0))
         item['crawldate'] = datetime.datetime.now().isoformat()
-        item['author'] = sel.xpath("//article/div[3]/p/span/a/span/text()").extract()
+        item['author'] = sel.xpath("//article/div[3]/p/span/a/span/text() | //article/div[3]/p/span/span/text()").extract()                                                                               
         item['headline'] = safepop(sel.xpath("//article/header/div/h1/text()").extract(), 0)
         item['body'] = safepop(mergeListElements(sel.xpath('//p[@class="story-body-text story-content"]/text() | //p[@class="story-body-text story-content"]/a/text()').extract()), 0)
         for i in sel.xpath("//p[@class='story-body-text story-content']/a/attribute::href").extract():
@@ -36,3 +36,10 @@ class MySpider(CrawlSpider):
         item['links'] = links
         log.msg("parsed %s successfully" % response.url, level=log.INFO) 
         return item
+
+    def parse_date(self, d):
+        if d is not None:
+            year, month, day = d.split('-')
+            return datetime.datetime(int(year), int(month), int(day), 0, 0).isoformat()
+        else:
+            return None

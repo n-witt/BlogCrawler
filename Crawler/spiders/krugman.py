@@ -37,5 +37,5 @@ class MySpider(CrawlSpider):
         for i in sel.xpath("//p[@class='story-body-text']/a/attribute::href").extract():
             links.append(i)
         item['links'] = links
-        log.msg("parsed %s successfully" % response.url, level=log.INFO) 
+        log.msg("parsed %s successfully" % response.url, level=log.INFO)
         return item
