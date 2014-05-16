@@ -1,10 +1,8 @@
 done:
 duplicate erkennen und ausschließen.
+archiv ancrawlen (die vergangenheit erschließen)
 
 undone:
 "scrapy crawlall" mit argument versehen, um eine elasticsearch-instanz angeben zu können
-archiv ancrawlen (die vergangenheit erschließen)
-probleme mit den autoren bei upshot lösen:
-item['author'] = sel.xpath("//article/div[3]/p/span/a/span/text() | //article/div[3]/p/span/span/text()").extract()
-//article/header/div/div[2]/div/p/span[2]/a/span
-//article/header/div/div[2]/div/p/span/span
+parameter a die spiders geben, um den zeitraum zu steuern, den sie ancrawlen
+   http://stackoverflow.com/questions/15611605/how-to-pass-a-user-defined-argument-in-scrapy-spider
