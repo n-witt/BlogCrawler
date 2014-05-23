@@ -3,6 +3,8 @@ Created on 06.05.2014
 
 @author: user
 '''
+import calendar
+from datetime import datetime, date
 from scrapy import log
 
 
@@ -48,4 +50,22 @@ def safepop(o, element):
             return o.pop(element)
     else:
         return None
-    
+
+def add_months(sourcedate,months):
+    month = sourcedate.month - 1 + months
+    year = sourcedate.year + month / 12
+    month = month % 12 + 1
+    day = min(sourcedate.day,calendar.monthrange(year,month)[1])
+    return date(year,month,day)
+
+def validate_date_range(startDate, endDate):
+    try:
+        start = datetime.strptime(startDate, "%Y-%m")
+        end = datetime.strptime(endDate, "%Y-%m")
+    except ValueError:
+        raise ValueError("The Date-Inputformat is invalid. yyyy-mm is expected.")
+    if (end - start).days < 0:
+        raise ValueError("The enddate is prior the startdate.")
+
+def init_logger():
+    log.start(loglevel='WARNING', logstdout=False)

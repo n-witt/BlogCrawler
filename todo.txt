@@ -1,8 +1,16 @@
 done:
-duplicate erkennen und ausschließen.
-archiv ancrawlen (die vergangenheit erschließen)
+das blog-item um felder für topics, tags, teaser und referenzen erweitern für vox.
+html-tags aus dem body der vox-spider entfernen.
+vox.org crawlen
 
 undone:
 "scrapy crawlall" mit argument versehen, um eine elasticsearch-instanz angeben zu können
-parameter a die spiders geben, um den zeitraum zu steuern, den sie ancrawlen
+parameter an die spiders geben, um den zeitraum zu steuern, den sie ancrawlen
    http://stackoverflow.com/questions/15611605/how-to-pass-a-user-defined-argument-in-scrapy-spider
+das projekt für andere nutzbar machen. maven nutzen?
+was kann man mit den referenzen von vox.org machen?
+in der krugman spider die leeren item-objete füllen
+die alten spiders löschen
+im krugman blog die uhrzeit parsen. die hat jetzt gerade ein komisches format
+den code nach fehlenden typprüfungen untersuchen
+eine generische fetch_json_doc-methode schreiben (krugmann und upshot)

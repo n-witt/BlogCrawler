@@ -10,33 +10,45 @@ from scrapy.selector import Selector
 from scrapy.spider import Spider
 import urllib2
 
+from Crawler import toolbox
 from Crawler.items import BlogItem
-from Crawler.toolbox import safepop, mergeListElements
+from Crawler.toolbox import safepop, mergeListElements, init_logger
+import dateutil.parser as dparser
 
 
 class MySpider(Spider):
-    name = 'nytimes.com/upshot/json'
+    name = 'nytimes.com/upshot'
     start_urls = []
     
     '''
-    the constructor grabs pages of the content delivery interface and
+    the constructor fetches pages from the content delivery interface and
     extracts the contained url which are pointing to the actual blog-entries.
     currently it grabs all available entries (~160 on 2014-05-15), there is
     no upper barrier. it raises an exception (KeyError) if the response
     won't correspond the expectations.   
     '''
     
-    def __init__(self, *args, **kwargs):
-        log.start(loglevel='WARNING', logstdout=False)       
+    def __init__(self, startDate, endDate, *args, **kwargs):
+        init_logger()
         try:
-            response = self.fetch_json_doc(1)
+            toolbox.validate_date_range(startDate, endDate)
+        except ValueError as e:
+            raise ValueError(e.message)
+        
+        startDate = dparser.parse(startDate).replace(day=1).replace(tzinfo=None)
+        endDate = dparser.parse(endDate).replace(day=1).replace(tzinfo=None)
+        
+        try:
+            response = self.fetch_json_doc(0)
             hits = response['response']['meta']['hits']
             offset = response['response']['meta']['offset']
-            i = 2
+            i = 1
             while hits > offset:
                 for n in response['response']['docs']:
-                    self.start_urls.append(n['web_url'])
-                    log.msg(n['web_url'], level=log.DEBUG)
+                    pubDate = dparser.parse(n['pub_date'], fuzzy=True).replace(tzinfo=None)
+                    if pubDate >= startDate and pubDate <= endDate:
+                        self.start_urls.append(n['web_url'])
+                        log.msg(n['web_url'], level=log.DEBUG)
                 response = self.fetch_json_doc(i)
                 hits = response['response']['meta']['hits']
                 offset = response['response']['meta']['offset']
@@ -68,11 +80,10 @@ class MySpider(Spider):
     the main purpose of this method is to ban the ugly url out of the important
     elements of the source code. it expects you to pass an int-parameter (otherwise 
     it will throw an AssertionError) which refers to a page. it returns the response
-    to in a json-style format (a python dict with nested elements). 
+    in a json-style format (a python dict with nested elements). 
     '''
     def fetch_json_doc(self, page):
         assert type(page) == int
         response = urllib2.urlopen("http://query.nytimes.com/svc/add/v1/sitesearch.json?\
-fq=section_name%3A%28%22The+Upshot%22%29+AND+document_type%3A%28%22article%22%29&page="+ str(page) + "\
-&end_date=" + str(datetime.datetime.today().date()))
+fq=section_name%3A(%22The+Upshot%22)+AND+document_type%3A(%22article%22)&page="+ str(page))
         return json.loads(response.read())

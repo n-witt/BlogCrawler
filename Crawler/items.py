@@ -14,3 +14,7 @@ class BlogItem(Item):
     headline = Field()
     body = Field()
     links = Field()
+    references = Field()
+    comments = Field()
+    tags = Field()
+    teaser = Field()

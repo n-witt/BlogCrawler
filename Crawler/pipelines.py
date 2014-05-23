@@ -29,14 +29,18 @@ class StoreInElasticsearch(object):
             self.create_index(self.es)
         
         blog_entry = {
-               "name": item['blog_name'],
+               "blog_name": item['blog_name'],
                "url": item['url'],
                "releasedate": item['releasedate'],
                "crawldate": item['crawldate'],
                "author": item['author'],
                "headline": item['headline'],
                "body": item['body'],
-               "links": item['links']
+               "links": item['links'],
+               "references" : item['references'],
+               "comments" : item['comments'],
+               "tags" : item['tags'],
+               "teaser" : item['teaser']
                }
         count_url_query = {"query": {
                         "term": {
