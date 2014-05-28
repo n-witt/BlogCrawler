@@ -66,6 +66,7 @@ def validate_date_range(startDate, endDate):
         raise ValueError("The Date-Inputformat is invalid. yyyy-mm is expected.")
     if (end - start).days < 0:
         raise ValueError("The enddate is prior the startdate.")
+    return start, end
 
 def init_logger():
     log.start(loglevel='WARNING', logstdout=False)

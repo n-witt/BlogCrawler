@@ -1,16 +1,12 @@
 done:
-das blog-item um felder für topics, tags, teaser und referenzen erweitern für vox.
-html-tags aus dem body der vox-spider entfernen.
-vox.org crawlen
+parameter an die spiders geben, um den zeitraum zu steuern, den sie ancrawlen
+   http://stackoverflow.com/questions/15611605/how-to-pass-a-user-defined-argument-in-scrapy-spider
 
 undone:
 "scrapy crawlall" mit argument versehen, um eine elasticsearch-instanz angeben zu können
-parameter an die spiders geben, um den zeitraum zu steuern, den sie ancrawlen
-   http://stackoverflow.com/questions/15611605/how-to-pass-a-user-defined-argument-in-scrapy-spider
 das projekt für andere nutzbar machen. maven nutzen?
-was kann man mit den referenzen von vox.org machen?
-in der krugman spider die leeren item-objete füllen
-die alten spiders löschen
-im krugman blog die uhrzeit parsen. die hat jetzt gerade ein komisches format
+was kann man mit literaturverweisen (z.b. von vox.org) machen?
 den code nach fehlenden typprüfungen untersuchen
 eine generische fetch_json_doc-methode schreiben (krugmann und upshot)
+den scrapy-internen logging
+mechanismus verwenden

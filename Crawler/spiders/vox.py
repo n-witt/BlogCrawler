@@ -21,21 +21,18 @@ class MySpider(CrawlSpider):
     start = datetime.now()
     end = datetime.now()
     rules = (
-        Rule(SgmlLinkExtractor(restrict_xpaths=('//div[@class="vox-article autoclear"]/h2'))\
-             , callback='parse_item'),
+        Rule(SgmlLinkExtractor(restrict_xpaths=('//div[@class="vox-article autoclear"]/h2')), callback='parse_item'),
     )
 
-    def __init__(self, startDate, endDate, *args, **kwargs):
-        init_logger()
-        
+    def __init__(self, startDate, endDate, *args, **kwargs):  
         try:
-            toolbox.validate_date_range(startDate, endDate)
+            startDate, endDate = toolbox.validate_date_range(startDate, endDate)
         except ValueError as e:
             raise ValueError(e.message)
         
-        for i in range(0, (self.end.year-self.start.year) * 12 + (self.end.month-self.start.month) + 1):
-            foo = 'http://www.voxeu.org/columns/archive/' + toolbox.add_months(self.start, i).strftime('%Y-%m')
-            self.start_urls.append(foo)
+        for i in range(0, (endDate.year-startDate.year) * 12 + (endDate.month-startDate.month) + 1):
+            url = 'http://www.voxeu.org/columns/archive/' + toolbox.add_months(startDate, i).strftime('%Y-%m')
+            self.start_urls.append(url)
         super(MySpider, self).__init__(*args, **kwargs)
 
     def parse_item(self, response):
@@ -48,12 +45,12 @@ class MySpider(CrawlSpider):
         item['author'] = self.extract_authors(safepop(sel.xpath('/html/body/div[2]/div/div[2]/p/strong/text()').extract(), 0))
         item['headline'] = safepop(sel.xpath('/html/body/div[2]/div/div[2]/h1/text()').extract(), 0).strip()
         item['body'] = safepop(mergeListElements(sel.xpath('//div[@class="article-content"]/h1[contains(., "Reference")]/preceding-sibling::*/text()').extract()), 0)
-        item['links'] = sel.xpath('//div[@class="article-content"]/h1[contains(., "Reference")]/following-sibling::*/a/@href').extract()
+        item['links'] = sel.xpath('//div[@class="format_text entry-content"]/p[@class="to_comments"]/preceding-sibling::*/descendant-or-self::*/text()').extract()
         item['references'] = self.extract_references(sel.xpath('//div[@class="article-content"]/h1[contains(., "Reference")]/following-sibling::*'))
         item['comments'] = ""
         item['tags'] = ""
         item["teaser"] = safepop(mergeListElements(sel.xpath('//div[contains(@class, "teaser")]/descendant-or-self::*/text()').extract()), 0).strip()
-        log.msg("parsed %s successfully" % response.url, level=log.INFO)
+        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
         
         return item
     

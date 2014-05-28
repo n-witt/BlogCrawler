@@ -23,7 +23,6 @@ class MySpider(Spider):
     start_urls = []
     
     def __init__(self, startDate, endDate, *args, **kwargs):
-        init_logger()
         #validating, parsing and converting the date/time-stuff
         try:
             toolbox.validate_date_range(startDate, endDate)
@@ -47,7 +46,6 @@ class MySpider(Spider):
                 if pubDate >= startDate and pubDate <= endDate:
                     url = safepop(sel.xpath('//div[@data-url]/attribute::data-url').extract(), 0)
                     self.start_urls.append(url)
-                    log.msg(url, level=log.DEBUG)
             if pubDate < startDate:
                 break
             i += 1
@@ -72,7 +70,7 @@ class MySpider(Spider):
         item['comments'] = ""
         item['tags'] = ""
         item['teaser'] = ""
-        log.msg("parsed %s successfully" % response.url, level=log.DEBUG)
+        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
         return item
             
     def fetch_json_doc(self, page):

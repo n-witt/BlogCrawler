@@ -29,7 +29,6 @@ class MySpider(Spider):
     '''
     
     def __init__(self, startDate, endDate, *args, **kwargs):
-        init_logger()
         try:
             toolbox.validate_date_range(startDate, endDate)
         except ValueError as e:
@@ -54,7 +53,7 @@ class MySpider(Spider):
                 offset = response['response']['meta']['offset']
                 i += 1                
         except KeyError:
-            log.msg("Error reading init-Page for spider " + self.name + ".\n\
+            self.msg("Error reading init-Page for spider " + self.name + ".\n\
 #The required response.meta-element was not contained in the response.", level=log.ERROR)
             raise KeyError("Required Key in dict not found.")
         super(MySpider, self).__init__(*args, **kwargs)
@@ -73,7 +72,11 @@ class MySpider(Spider):
         for i in sel.xpath("//p[@class='story-body-text story-content']/a/attribute::href").extract():
             links.append(i)
         item['links'] = links
-        log.msg("parsed %s successfully" % response.url, level=log.INFO) 
+        item['references'] = ""
+        item['comments'] = ""
+        item['tags'] = ""
+        item['teaser'] = ""
+        self.log("parsed %s successfully" % response.url, level=log.DEBUG) 
         return item
         
     '''
