@@ -8,5 +8,7 @@ das projekt für andere nutzbar machen. maven nutzen?
 was kann man mit literaturverweisen (z.b. von vox.org) machen?
 den code nach fehlenden typprüfungen untersuchen
 eine generische fetch_json_doc-methode schreiben (krugmann und upshot)
-den scrapy-internen logging
-mechanismus verwenden
+den scrapy-internen logging mechanismus verwenden
+parameter nicht zur pflicht machen
+maximale zeilenlänge einhalten
+sioc als output-format implementieren (siehe https://en.wikipedia.org/wiki/Semantically-Interlinked_Online_Communities)
