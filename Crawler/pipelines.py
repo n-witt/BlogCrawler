@@ -54,7 +54,6 @@ class StoreInElasticsearch(object):
         if hits['count'] == 0:
             #insert into index
             self.es.index(index=self.index, doc_type=self.doc_type, body=blog_entry)
-            log.msg("%s inserted into elasticsearch" % item['url'], level=log.INFO)
         return item
     
     def create_index(self, es):

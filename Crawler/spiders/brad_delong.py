@@ -8,7 +8,6 @@ from scrapy import log
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
-from scrapy.utils.response import open_in_browser
 
 from Crawler import toolbox
 from Crawler.items import BlogItem
@@ -36,7 +35,7 @@ class MySpider(CrawlSpider):
         super(MySpider, self).__init__(*args, **kwargs)
 
     def parse_item(self, response):
-        self.log(response.url, level=log.INFO)
+        self.log(response.url, level=log.DEBUG)
         sel = Selector(response)
         item = BlogItem()
 
