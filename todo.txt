@@ -12,3 +12,4 @@ den scrapy-internen logging mechanismus verwenden
 parameter nicht zur pflicht machen
 maximale zeilenlänge einhalten
 sioc als output-format implementieren (siehe https://en.wikipedia.org/wiki/Semantically-Interlinked_Online_Communities)
+eine methode zur geeigneten manipulation von startDate und endDate bauen (krugman und upshot)

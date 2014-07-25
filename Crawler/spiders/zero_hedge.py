@@ -52,7 +52,7 @@ class MySpider(CrawlSpider):
         #the last two elements are always "permalink" an and "comment", hence they can be discarded
         item['tags'] = sel.xpath('//ul[@class="links"]/li/a/text()').extract()
         item["teaser"] = ""
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
+        self.log("parsed %s successfully" % response.url, level=log.INFO)
         return item
 
     def extract_links(self, urls):

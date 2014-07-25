@@ -14,7 +14,7 @@ import urllib2
 
 from Crawler import toolbox
 from Crawler.items import BlogItem
-from Crawler.toolbox import safepop, init_logger
+from Crawler.toolbox import safepop
 import dateutil.parser as dparser
 
 
@@ -23,6 +23,7 @@ class MySpider(Spider):
     start_urls = []
     
     def __init__(self, startDate, endDate, *args, **kwargs):
+        urls = []
         #validating, parsing and converting the date/time-stuff
         try:
             toolbox.validate_date_range(startDate, endDate)
@@ -45,11 +46,16 @@ class MySpider(Spider):
                 pubDate = dparser.parse(safepop(sel.xpath('//time/@datetime').extract(), 0)).replace(tzinfo=None)
                 if pubDate >= startDate and pubDate <= endDate:
                     url = safepop(sel.xpath('//div[@data-url]/attribute::data-url').extract(), 0)
-                    self.start_urls.append(url)
+                    urls.append(url)
             if pubDate < startDate:
                 break
             i += 1
             json_page = self.fetch_json_doc(i)
+        #removing duplicates
+        for url in urls:
+            if self.start_urls.count(url) == 0:
+                self.start_urls.append(url)
+                           
         super(MySpider, self).__init__(*args, **kwargs)
 
     def parse(self, response):
@@ -61,7 +67,7 @@ class MySpider(Spider):
         item['releasedate'] = dparser.parse(safepop(sel.xpath('//time/@datetime').extract(), 0)).replace(tzinfo=None)
         item['crawldate'] = datetime.datetime.now().isoformat()
         item['author'] = "Paul Krugman"
-        item['headline'] = sel.xpath('//h1[@class="entry-title"]/text()').extract()
+        item['headline'] = safepop(sel.xpath('//h1[@class="entry-title"]/text()').extract(), 0)
         item['body'] = safepop(toolbox.mergeListElements(sel.xpath('//p[@class="story-body-text"]/text() | //p[@class="story-body-text"]/a/text()').extract()), 0)
         for i in sel.xpath("//p[@class='story-body-text']/a/attribute::href").extract():
             links.append(i)
@@ -70,7 +76,7 @@ class MySpider(Spider):
         item['comments'] = ""
         item['tags'] = ""
         item['teaser'] = ""
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
+        #self.log("parsed %s successfully" % response.url, level=log.INFO)
         return item
             
     def fetch_json_doc(self, page):

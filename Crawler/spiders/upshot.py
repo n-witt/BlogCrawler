@@ -3,6 +3,7 @@ Created on 06.05.2014
 
 @author: user
 '''
+import calendar
 import datetime
 import json
 from scrapy import log
@@ -12,7 +13,7 @@ import urllib2
 
 from Crawler import toolbox
 from Crawler.items import BlogItem
-from Crawler.toolbox import safepop, mergeListElements, init_logger
+from Crawler.toolbox import safepop, mergeListElements
 import dateutil.parser as dparser
 
 
@@ -36,6 +37,8 @@ class MySpider(Spider):
         
         startDate = dparser.parse(startDate).replace(day=1).replace(tzinfo=None)
         endDate = dparser.parse(endDate).replace(day=1).replace(tzinfo=None)
+        endDate = endDate.replace(day=calendar.monthrange(int(endDate.strftime('%Y')), int(endDate.strftime('%m')))[1])
+        endDate = endDate + datetime.timedelta(hours=23, minutes=59, seconds=59)        
         
         try:
             response = self.fetch_json_doc(0)
@@ -76,7 +79,7 @@ class MySpider(Spider):
         item['comments'] = ""
         item['tags'] = ""
         item['teaser'] = ""
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG) 
+        self.log("parsed %s successfully" % response.url, level=log.INFO) 
         return item
         
     '''

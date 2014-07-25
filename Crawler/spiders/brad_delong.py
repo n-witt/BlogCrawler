@@ -51,5 +51,5 @@ class MySpider(CrawlSpider):
         item['comments'] = ""
         item['tags'] = sel.xpath('//span[@class="post-footers"]/a[@rel="author"]/following-sibling::*/text()').extract()
         item["teaser"] = ""
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
+        self.log("parsed %s successfully" % response.url, level=log.INFO)
         return item

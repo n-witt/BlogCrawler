@@ -11,10 +11,13 @@ Created on 06.05.2014
            localhost:9200
 '''
 from scrapy import signals
-from twisted.internet import reactor
 from scrapy.command import ScrapyCommand
 from scrapy.crawler import Crawler
+from scrapy.exceptions import UsageError
+from scrapy.utils.conf import arglist_to_dict
 from scrapy.utils.project import get_project_settings
+from twisted.internet import reactor
+
 
 class Command(ScrapyCommand):
 
@@ -31,6 +34,18 @@ class Command(ScrapyCommand):
 
     def short_desc(self):
         return 'Runs all of the spiders'
+    
+    def add_options(self, parser):
+        ScrapyCommand.add_options(self, parser)
+        parser.add_option("-a", dest="spargs", action="append", default=[], metavar="NAME=VALUE",
+                          help="set spider argument (may be repeated)")
+        
+    def process_options(self, args, opts):
+        ScrapyCommand.process_options(self, args, opts)
+        try:
+            opts.spargs = arglist_to_dict(opts.spargs)
+        except ValueError:
+            raise UsageError("Invalid -a value, use -a NAME=VALUE", print_help=False)        
 
     def run(self, args, opts):
         settings = get_project_settings()
@@ -40,7 +55,7 @@ class Command(ScrapyCommand):
             crawler = Crawler(settings)
             crawler.signals.connect(self.quitReactor, signal=signals.spider_closed)
             crawler.configure()
-            spider = crawler.spiders.create(spider_name)
+            spider = crawler.spiders.create(spider_name, **opts.spargs)
             crawler.crawl(spider)
             crawler.start()
         crawler_process.start()

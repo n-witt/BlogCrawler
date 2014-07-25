@@ -35,7 +35,7 @@ class MySpider(CrawlSpider):
         super(MySpider, self).__init__(*args, **kwargs)
 
     def parse_item(self, response):
-        self.log(response.url, level=log.INFO)
+        self.log(response.url, level=log.DEBUG)
         sel = Selector(response)
         item = BlogItem()
         item['blog_name'] = "The BIG Picture"
@@ -50,6 +50,6 @@ class MySpider(CrawlSpider):
         item['comments'] = sel.xpath('//div[@class="comment-meta commentmetadata"]/following-sibling::p/text()').extract() 
         item['tags'] = sel.xpath('//a[@rel="category tag"]/text()').extract()
         item["teaser"] = ""
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
+        self.log("parsed %s successfully" % response.url, level=log.INFO)
         
         return item

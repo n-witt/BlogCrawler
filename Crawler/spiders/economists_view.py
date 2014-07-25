@@ -52,5 +52,5 @@ class MySpider(CrawlSpider):
         #the last two elements are always "permalink" an and "comment", hence they can be discarded
         item['tags'] = sel.xpath('//p[@class="posted"]/a[@rel="author"]/following-sibling::*/text()').extract()[0:-2]
         item["teaser"] = ""
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
+        self.log("parsed %s successfully" % response.url, level=log.INFO)
         return item

@@ -35,7 +35,7 @@ class MySpider(CrawlSpider):
         super(MySpider, self).__init__(*args, **kwargs)
 
     def parse_item(self, response):
-        self.log(response.url, level=log.INFO)
+        self.log(response.url, level=log.DEBUG)
         sel = Selector(response)
         item = BlogItem()
         item['blog_name'] = "econbrowser"
@@ -50,7 +50,7 @@ class MySpider(CrawlSpider):
         item['comments'] = self.extract_comments(sel) 
         item['tags'] = ""
         item["teaser"] = ""
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
+        self.log("parsed %s successfully" % response.url, level=log.INFO)
         
         return item
     

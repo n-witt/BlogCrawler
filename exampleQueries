@@ -1,0 +1,125 @@
+GET /foo/bar/_search
+{
+  "from": 0,
+  "size": 20, 
+  "fields": ["references"],
+  "query": {
+    "filtered": {
+      "filter": 
+        {"exists": {"field": "references"}}
+    }
+  }
+}
+
+GET /foo/bar/_search
+{
+  "from": 0,
+  "size": 20, 
+  "fields": ["links"],
+  "query": {
+    "match_phrase": {"links": ".pdf"}
+  }
+}
+
+GET /foo/bar/_search
+{
+  "fields": ["blog_name", "links", "references"], 
+  "query" : {
+    "bool" : {
+      "should" : [
+        {"match_phrase": {"links": ".pdf"}}, 
+        {"match_phrase": {"references": ".pdf"}},
+      ]
+    }
+  }
+}
+
+GET /foo/bar/_search
+{
+  "from": 0,
+  "size": 10, 
+  "query": {
+    "match_all": {}
+  },
+  "facets" : {
+    "tag" : {
+      "terms" : { "field" : "author" }
+    }
+  }
+}
+
+GET /foo/bar/_search
+{
+  "from": 21,
+  "size": 40,
+  "fields": ["links", "blog_name"], 
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET /foo/bar/_search
+{
+  "from": 1,
+  "size": 2,
+  "query": {
+    "match": {
+      "links": "*econbiz.eu*"
+    }
+  }
+}
+
+GET /foo/bar/_search
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "match_all": {}
+      },
+      "filter": {
+        "range": {
+          "releasedate": {
+            "gte": "2014-06-01",
+            "lt": "2014-06-02"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /foo/bar/_search
+{
+  "size": 0, 
+  "aggregations" : {
+    "blog_names" : {
+      "terms" : { 
+        "field" : "author"
+      }
+    }
+  }
+}
+
+GET /foo/bar/_search
+{
+   "query": {
+     "match_phrase": {
+       "author": "Paul Krugman"
+     }
+   },
+   "highlight": {
+     "fields": {
+       "author": {}
+     }
+   }
+}
+
+GET /foo/bar/_search
+{
+  "query": {
+    "regexp": {
+      "links": "[^http(s)?:\/\/www\.]"
+    }
+  }
+}

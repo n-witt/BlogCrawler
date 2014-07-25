@@ -11,7 +11,7 @@ from scrapy.selector import Selector
 
 from Crawler import toolbox
 from Crawler.items import BlogItem
-from Crawler.toolbox import safepop, mergeListElements, init_logger
+from Crawler.toolbox import safepop, mergeListElements
 import dateutil.parser as dparser
 
 
@@ -50,7 +50,7 @@ class MySpider(CrawlSpider):
         item['comments'] = ""
         item['tags'] = ""
         item["teaser"] = safepop(mergeListElements(sel.xpath('//div[contains(@class, "teaser")]/descendant-or-self::*/text()').extract()), 0).strip()
-        self.log("parsed %s successfully" % response.url, level=log.DEBUG)
+        self.log("parsed %s successfully" % response.url, level=log.INFO)
         
         return item
     

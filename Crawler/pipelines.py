@@ -23,7 +23,7 @@ class StoreInElasticsearch(object):
     doc_type = 'bar'
     
     def process_item(self, item, spider):
-        
+
         #create a convenient index, if not already exists
         if not self.ic.exists_type(index=self.index, doc_type=self.doc_type):
             self.create_index(self.es)
@@ -53,7 +53,10 @@ class StoreInElasticsearch(object):
         hits = self.es.count(index=self.index, doc_type=self.doc_type, body=count_url_query)
         if hits['count'] == 0:
             #insert into index
-            self.es.index(index=self.index, doc_type=self.doc_type, body=blog_entry)
+            ret = self.es.index(index=self.index, doc_type=self.doc_type, body=blog_entry)
+            log.msg("indexing " + item['url'] + " successful: " + str(ret[u"created"]), level=log.INFO)
+        else:
+            log.msg("item already indexed", level=log.INFO)
         return item
     
     def create_index(self, es):
