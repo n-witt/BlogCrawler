@@ -1,15 +1,5 @@
-done:
-parameter an die spiders geben, um den zeitraum zu steuern, den sie ancrawlen
-   http://stackoverflow.com/questions/15611605/how-to-pass-a-user-defined-argument-in-scrapy-spider
-
-undone:
-"scrapy crawlall" mit argument versehen, um eine elasticsearch-instanz angeben zu können
-das projekt für andere nutzbar machen. maven nutzen?
-was kann man mit literaturverweisen (z.b. von vox.org) machen?
-den code nach fehlenden typprüfungen untersuchen
-eine generische fetch_json_doc-methode schreiben (krugmann und upshot)
-den scrapy-internen logging mechanismus verwenden
-parameter nicht zur pflicht machen
-maximale zeilenlänge einhalten
-sioc als output-format implementieren (siehe https://en.wikipedia.org/wiki/Semantically-Interlinked_Online_Communities)
-eine methode zur geeigneten manipulation von startDate und endDate bauen (krugman und upshot)
+add arguments to the "scrapy crawlall" commmand, in order to declare the URL of an elasticsearch instance
+reviewing the code with empharsize on typchecking
+create a generic fetch_json_doc method (look at krugman and upshot)
+make use of the scrapy-internal logging-machanism 
+implement sioc as output format (see https://en.wikipedia.org/wiki/Semantically-Interlinked_Online_Communities)
